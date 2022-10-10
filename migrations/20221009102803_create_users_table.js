@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
     return knex.schema.createTable('users', function (table) {
-        table.increments('user_id').notNullable();
+        table.uuid('user_id').unique().notNullable();
         table.string('first_name').notNullable();
         table.string('last_name').notNullable();
         table.string('phone_number').notNullable();
