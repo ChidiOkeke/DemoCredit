@@ -49,6 +49,7 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         res.status(201).json({
             message: "You have successfully created a user",
+            success: true,
             user_id: id
         })
     } catch (err) {
@@ -61,9 +62,10 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 }
 
 export async function loginUser(req: Request, res: Response, next: NextFunction) {
+
+
     try {
         const validationResult = loginSchema.validate(req.body, options)
-
 
         if (validationResult.error) {
             return res.status(400).json({
@@ -73,10 +75,13 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
         const user = await database.select('*').from<User>('users').where('email', req.body.email).first()
 
         if (user) {
-            const token = generateToken(user.user_id)
+
+            const { user_id } = user
+            const token = generateToken({ user_id })
+
             const validUser = await bcrypt.compare(req.body.password, user.password as string);
 
-            delete user.password //delete password hash from api response
+            delete user.password //delete password from user object before api response
 
             if (!validUser) {
                 res.status(401).json({
@@ -87,6 +92,7 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
             if (validUser) {
                 res.status(200).json({
                     message: "Successfully logged in",
+                    success: true,
                     token,
                     user
 
@@ -95,7 +101,7 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
         } else {
 
             res.status(400).json({
-                msg: 'User does not exist',
+                message: 'User does not exist',
                 route: '/login'
             })
 
@@ -103,8 +109,9 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
 
     } catch (err) {
         res.status(500).json({
-            msg: 'failed to login',
-            route: '/login'
+            message: 'failed to login',
+            route: '/login',
+            err
         })
     }
 
