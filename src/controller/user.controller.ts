@@ -10,32 +10,35 @@ const database = knex(knexConfig.development);
 
 
 export async function registerUser(req: Request, res: Response, next: NextFunction) {
+    const id = uuidv4()
     try {
         const validationResult = registerSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                Error: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message
             })
         }
 
-        const duplicatEmail = await database<User>('users').select('email').where('email', req.body.email)
+        const duplicatEmail = await database<User>('users').select('email').where('email', req.body.email).first()
 
-        if (duplicatEmail.length > 0) {
+        if (duplicatEmail) {
             return res.status(409).json({
                 message: "Email is already in use. Please change email"
             })
         }
 
-        const duplicatePhone = await database<User>('users').select('phone_number').where('phone_number', req.body.phone_number)
+        const duplicatePhone = await database<User>('users').select('phone_number').where('phone_number', req.body.phone_number).first()
 
-        if (duplicatePhone.length > 0) {
+        if (duplicatePhone) {
             return res.status(409).json({
                 message: "Phone number is already in use. Please change phone number"
             })
         }
         const passwordHash = await bcrypt.hash(req.body.password, 8)
 
+
         const record = await database<User>('users').insert({
+            user_id: id,
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             email: req.body.email,
@@ -46,7 +49,7 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         res.status(201).json({
             message: "You have successfully created a user",
-            record
+            user_id: id
         })
     } catch (err) {
         res.status(500).json({
@@ -57,40 +60,52 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
     }
 }
 
-// export async function loginUser(req: Request, res: Response, next: NextFunction) {
-//     const id = uuidv4()
-//     try {
-//         const validationResult = loginSchema.validate(req.body, options)
-//         if (validationResult.error) {
-//             return res.status(400).json({
-//                 Error: validationResult.error.details[0].message
-//             })
-//         }
-//         const User = await UserInstance.findOne({ where: { email: req.body.email } }) as unknown as { [key: string]: string }
-//         const { id } = User
-//         const token = generateToken({ id })
-//         const validUser = await bcrypt.compare(req.body.password, User.password);
+export async function loginUser(req: Request, res: Response, next: NextFunction) {
+    try {
+        const validationResult = loginSchema.validate(req.body, options)
 
-//         if (!validUser) {
-//             res.status(401).json({
-//                 message: "Password do not match"
-//             })
-//         }
 
-//         if (validUser) {
-//             res.status(200).json({
-//                 message: "Successfully logged in",
-//                 token,
-//                 User
+        if (validationResult.error) {
+            return res.status(400).json({
+                err: validationResult.error.details[0].message
+            })
+        }
+        const user = await database.select('*').from<User>('users').where('email', req.body.email).first()
 
-//             })
-//         }
+        if (user) {
+            const token = generateToken(user.user_id)
+            const validUser = await bcrypt.compare(req.body.password, user.password as string);
 
-//     } catch (err) {
-//         res.status(500).json({
-//             msg: 'failed to login',
-//             route: '/login'
-//         })
-//     }
+            delete user.password //delete password hash from api response
 
-// }
+            if (!validUser) {
+                res.status(401).json({
+                    message: "Passwords do not match"
+                })
+            }
+
+            if (validUser) {
+                res.status(200).json({
+                    message: "Successfully logged in",
+                    token,
+                    user
+
+                })
+            }
+        } else {
+
+            res.status(400).json({
+                msg: 'User does not exist',
+                route: '/login'
+            })
+
+        }
+
+    } catch (err) {
+        res.status(500).json({
+            msg: 'failed to login',
+            route: '/login'
+        })
+    }
+
+}
