@@ -4,7 +4,8 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan'
 import path from 'path';
 import userRouter from './routes/user.route';
-
+import accountRouter from './routes/account.route';
+import transactionRouter from './routes/transaction.route';
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/users', userRouter);
+app.use('/accounts', accountRouter);
+app.use('/transactions', transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

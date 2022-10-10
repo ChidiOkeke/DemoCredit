@@ -1,17 +1,27 @@
 import Joi from 'joi'
 import jwt from 'jsonwebtoken'
 
-
-
-export const createTodoSchema = Joi.object().keys({
-    title: Joi.string().lowercase().required(),
-    completed: Joi.boolean().required()
+export const createAccountSchema = Joi.object().keys({
+    user_id: Joi.string().required(),
+    account_status: Joi.string().required()
 });
 
-export const updateTodoSchema = Joi.object().keys({
-    title: Joi.string().lowercase(),
-    completed: Joi.boolean()
+export const fundAccountSchema = Joi.object().keys({
+    account_id: Joi.string().required(),
+    amount: Joi.number().required()
 });
+
+export const withdrawFundsSchema = Joi.object().keys({
+    account_id: Joi.string().required(),
+    amount: Joi.number().required()
+});
+
+export const transferFundsSchema = Joi.object().keys({
+    from_account_id: Joi.string().required(),
+    to_account_id: Joi.string().required(),
+    amount: Joi.number().required()
+});
+
 
 export const registerSchema = Joi.object().keys({
     first_name: Joi.string().required(),
@@ -30,7 +40,7 @@ export const loginSchema = Joi.object().keys({
 })
 
 //Generate Token
-export const generateToken = (user: string): unknown => {
+export const generateToken = (user: { [key: string]: unknown }): unknown => {
     const pass = process.env.JWT_SECRET as string
     return jwt.sign(user, pass, { expiresIn: '1d' })
 }
