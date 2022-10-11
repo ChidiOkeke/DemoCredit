@@ -256,6 +256,9 @@ Returns an array of all transactions in the transactions table, a count of all t
 }
         
 ```
+## E-R Diagram:
+![Alt text](https://github.com/ChidiOkeke/DemoCredit/blob/main/images/demo_credit.png "E-R Diagram")
+
 
 ## Technologies used:
 
