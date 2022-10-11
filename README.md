@@ -2,6 +2,47 @@
 
 Demo Credit is a mobile lending app that enables wallet functionality. It enables borrowers receive loans they have been granted and also send the money for repayments.
 
+## How to run this project
+
+Before starting this project, install Git, MySQL and NodeJS on your machine.
+
+
+
+VSCode terminal is recommended.
+
+```bash
+# Clone this repository using SSH or HTTPS
+$ git clone git@github.com:ChidiOkeke/DemoCredit.git 
+
+OR 
+
+$ git clone https://github.com/ChidiOkeke/DemoCredit.git
+
+# Access the repository on your terminal.
+$ cd DemoCredit
+
+# 
+# Setup environment variables for JWT and MySQL
+#
+
+# Install dependencies
+$ yarn install
+
+# Compile in watch mode
+$ yarn compile
+
+# Run migrations
+$ yarn migrate
+
+# Run
+$ yarn dev
+
+```
+
+The project will now be accessible at [http:localhost:3000](http:localhost:3000)
+
+
+
 ## Instructions
 - All routes except **/users/login** and **/users/register** require bearer token authorization
 
@@ -9,7 +50,8 @@ Demo Credit is a mobile lending app that enables wallet functionality. It enable
 
 - **/accounts/fund**,  **/accounts/withdraw**  and **/accounts/transfer** create entries in the transactions table for each transaction.
 
-- POST **/users/register**: The route must receive first name, last name, date of birth, email, phone number, password and confirm password within the body of the request. The email and phone number must be unique per user. Creates an instance of the User with the received data and inserts in the users table. Returns newly generated user ID, success boolean and success message.
+- #### Register user `POST /users/register` 
+The route must receive first name, last name, date of birth, email, phone number, password and confirm password within the body of the request. The email and phone number must be unique per user. Creates an instance of the User with the received data and inserts in the users table. Returns newly generated user ID, success boolean and success message.
 
 **Expected Input**
 ```json
@@ -33,7 +75,8 @@ Demo Credit is a mobile lending app that enables wallet functionality. It enable
 }
 ```
 
-- POST **/users/login**: The route must receive email and password within the body of the request. The email and password must match an existing user email and password for success. Returns all user data except password hash.
+- #### Login user `POST /users/login`  
+The route must receive email and password within the body of the request. The email and password must match an existing user email and password for success. Returns all user data except password hash.
 
 **Expected Input**
 ```json
@@ -64,7 +107,10 @@ Demo Credit is a mobile lending app that enables wallet functionality. It enable
 }
 ```
 
-- POST **/accounts/create**: The route must receive user ID and account status within the body of the request. Each user ID is unique in the accounts table. 
+
+- #### Create account `POST /accounts/create` 
+
+The route must receive user ID and account status within the body of the request. Each user ID is unique in the accounts table. 
 A user cannot have more than one associated account.
 Returns newly generated account ID, success boolean and success message.
 
@@ -85,8 +131,9 @@ Returns newly generated account ID, success boolean and success message.
     "account_id": "ddf795c0-155a-4813-b334-1fd6457715cd"
 }
 ```
+- #### Fund account `PUT /accounts/fund`
 
-- PUT **/accounts/fund**: The route must receive account ID and amount to fund within the body of the request. Amount to fund must be greater than 0.0. Prevents duplicate transactions under 60 seconds. Returns funded account ID, success boolean, amount, updated account balance and success message.
+The route must receive account ID and amount to fund within the body of the request. Amount to fund must be greater than 0.0. Prevents duplicate transactions under 60 seconds. Returns funded account ID, success boolean, amount, updated account balance and success message.
 
 **Expected Input**
 ```json
@@ -106,8 +153,8 @@ Returns newly generated account ID, success boolean and success message.
     "success": true
 }
 ```
-
-- PUT **/accounts/transfer**: The route must receive source account ID, destination account ID and amount. Amount to fund must be greater than 0.0. Source and destination account IDs must be different. Cannot transfer more than the current account balance. Prevents duplicate transactions under 60 seconds. Returns source account ID, destination account ID, amount, source account balance, destination account balance, success boolean and success message.
+- #### Funds transfer `PUT /accounts/transfer`
+The route must receive source account ID, destination account ID and amount. Amount to fund must be greater than 0.0. Source and destination account IDs must be different. Cannot transfer more than the current account balance. Prevents duplicate transactions under 60 seconds. Returns source account ID, destination account ID, amount, source account balance, destination account balance, success boolean and success message.
 
 **Expected Input**
 ```json
@@ -130,8 +177,9 @@ Returns newly generated account ID, success boolean and success message.
     "success": true
 }
 ```
+- #### Funds withdrawal `PUT /accounts/withdraw`
 
-- PUT **/accounts/withdraw**: The route must receive account ID and amount. Cannot withdraw more than the current account balance. Prevents duplicate transactions under 60 seconds. Returns withdrawal account ID, success boolean, amount, updated account balance and success message.
+The route must receive account ID and amount. Cannot withdraw more than the current account balance. Prevents duplicate transactions under 60 seconds. Returns withdrawal account ID, success boolean, amount, updated account balance and success message.
 
 **Expected Input**
 ```json
@@ -151,8 +199,8 @@ Returns newly generated account ID, success boolean and success message.
     "success": true
 }
 ```
-
-- GET **/transactions**: Returns an array of all transactions in the transactions table, a count of all transactions and success boolean.
+- #### Get all transactions `GET /transactions`
+Returns an array of all transactions in the transactions table, a count of all transactions and success boolean.
 
 **Expected Output**
 ```json
@@ -175,8 +223,8 @@ Returns newly generated account ID, success boolean and success message.
 }
         
 ```
-
-- GET **/transactions/:account_id**: Returns an array of all transactions from or to a given account ID, a count of these transactions and success boolean.
+- #### Get account transactions `GET /transactions/:account_id`
+ Returns an array of all transactions from or to a given account ID, a count of these transactions and success boolean.
 
 **Expected Output**
 ```json
@@ -209,31 +257,13 @@ Returns newly generated account ID, success boolean and success message.
         
 ```
 
-## How to run this project
+## Technologies used:
 
-Before starting this project, install Git, MySQL and Node.js on your machine.
+- Typescript
+- NodeJS
+- Express
+- KnexJS
+- Yarn
 
-VSCode terminal is recommended.
-
-```bash
-# Clone this repository using SSH or HTTPS
-$ git clone git@github.com:ChidiOkeke/DemoCredit.git 
-
-OR 
-
-$ git clone https://github.com/ChidiOkeke/DemoCredit.git
-
-# Access the repository on your terminal.
-$ cd DemoCredit
-
-# Install dependencies
-$ yarn install
-
-# Compile in watch mode
-$ yarn compile
-
-# Run
-$ yarn dev
-```
-
-The project will now be accessible at [http:localhost:3000](http:localhost:3000)
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
