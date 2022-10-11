@@ -4,6 +4,6 @@ import { getAccountTransactions, getAllTransactions } from '../controller/transa
 const router = express.Router();
 
 router.get('/', auth, getAllTransactions)
-router.post('/:id', auth, getAccountTransactions)
+router.get('/:account_id', auth, getAccountTransactions)
 
 export default router

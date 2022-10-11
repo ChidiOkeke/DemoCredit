@@ -99,7 +99,7 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
             transaction_type: transactionType,
             from_account_id: req.body.account_id,
             to_account_id: req.body.account_id,
-            date_issued: date.toISOString(),
+            date_issued: date.toLocaleString('en-GB'),
             amount: req.body.amount
         })
 
@@ -168,7 +168,7 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             transaction_type: transactionType,
             from_account_id: req.body.account_id,
             to_account_id: req.body.account_id,
-            date_issued: date.toISOString(),
+            date_issued: date.toLocaleString('en-GB'),
             amount: req.body.amount
         })
 
@@ -312,7 +312,7 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
             transaction_type: transactionType,
             from_account_id: req.body.from_account_id,
             to_account_id: req.body.to_account_id,
-            date_issued: date.toISOString(),
+            date_issued: date.toLocaleString('en-GB'),
             amount: req.body.amount
         })
 
