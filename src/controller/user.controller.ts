@@ -15,7 +15,8 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
         const validationResult = registerSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                err: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message,
+                success: false
             })
         }
 
@@ -23,7 +24,8 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         if (duplicatEmail) {
             return res.status(409).json({
-                message: "Email is already in use. Please change email"
+                message: "Email is already in use. Please change email",
+                success: false
             })
         }
 
@@ -31,7 +33,8 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
 
         if (duplicatePhone) {
             return res.status(409).json({
-                message: "Phone number is already in use. Please change phone number"
+                message: "Phone number is already in use. Please change phone number",
+                success: false
             })
         }
         const passwordHash = await bcrypt.hash(req.body.password, 8)
@@ -54,7 +57,8 @@ export async function registerUser(req: Request, res: Response, next: NextFuncti
         })
     } catch (err) {
         res.status(500).json({
-            msg: 'Failed to register user',
+            message: 'Failed to register user',
+            success: false,
             route: '/register',
             err
         })
