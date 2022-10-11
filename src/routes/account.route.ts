@@ -4,8 +4,8 @@ import { createAccount, fundAccount, transferFunds, withdrawFunds } from '../con
 const router = express.Router();
 
 router.post('/create', auth, createAccount)
-router.post('/fund', auth, fundAccount)
-router.post('/withdraw', auth, withdrawFunds)
-router.post('/transfer', auth, transferFunds)
+router.put('/fund', auth, fundAccount)
+router.put('/withdraw', auth, withdrawFunds)
+router.put('/transfer', auth, transferFunds)
 
 export default router

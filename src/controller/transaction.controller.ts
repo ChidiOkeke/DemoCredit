@@ -17,6 +17,7 @@ export async function getAllTransactions(req: Request, res: Response, next: Next
         if (transactions.length > 0) {
             return res.status(200).json({
                 count: transactions.length,
+                success: true,
                 transactions
             })
         } else {
@@ -40,12 +41,13 @@ export async function getAccountTransactions(req: Request, res: Response, next: 
 
         const transactions = await database<Transaction>('transactions')
             .select('*')
-            .where('from_account_id', req.params.id)
-            .orWhere('to_account_id', req.params.id)
+            .where('from_account_id', req.params.account_id)
+            .orWhere('to_account_id', req.params.account_id)
 
         if (transactions.length > 0) {
             return res.status(200).json({
                 count: transactions.length,
+                success: true,
                 transactions
             })
         } else {
