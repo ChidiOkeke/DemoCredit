@@ -16,7 +16,8 @@ export async function createAccount(req: Request, res: Response, next: NextFunct
         const validationResult = createAccountSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                err: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message,
+                success: false
             })
         }
 
@@ -25,7 +26,8 @@ export async function createAccount(req: Request, res: Response, next: NextFunct
         if (duplicateAccount) {
             return res.status(409).json({
                 message: "Account already exists",
-                duplicateAccount
+                duplicateAccount,
+                success: false,
             })
         }
 
@@ -45,7 +47,8 @@ export async function createAccount(req: Request, res: Response, next: NextFunct
         res.status(500).json({
             msg: 'Failed to create an account',
             route: '/create',
-            err
+            err,
+            success: false
         })
     }
 }
@@ -57,20 +60,22 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
 
 
     try {
+
         const validationResult = fundAccountSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                err: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message,
+                success: false
             })
         }
 
         if (req.body.amount <= 0.0) {
             return res.status(400).json({
                 err: "Please enter a valid amount",
-                amount: req.body.amount
+                amount: req.body.amount,
+                success: false
             })
         }
-
 
 
         const oldAccountBalance = await database.select('account_balance').from<Account>('accounts').where('account_id', req.body.account_id).first()
@@ -84,13 +89,17 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
             .orderBy('created_at', 'desc')
             .first()
 
-        const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
+        if (duplicateTransaction) {
+            const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
 
-        if (timeDifferenceInSeconds <= minute) {
-            return res.status(400).json({
-                err: "Duplicate transaction. Please try again soon"
-            })
+            if (timeDifferenceInSeconds <= minute) {
+                return res.status(400).json({
+                    err: "Duplicate transaction. Please try again soon",
+                    success: false
+                })
+            }
         }
+
 
         const date = new Date();
 
@@ -119,6 +128,7 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
         res.status(500).json({
             msg: 'Failed to fund account',
             route: '/fund',
+            success: false,
             err
         })
     }
@@ -132,14 +142,16 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
         const validationResult = withdrawFundsSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                err: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message,
+                success: false
             })
         }
 
         if (req.body.amount <= 0.0) {
             return res.status(400).json({
                 err: "Please enter a valid amount",
-                amount: req.body.amount
+                amount: req.body.amount,
+                success: false
             })
         }
 
@@ -153,12 +165,17 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             .orderBy('created_at', 'desc')
             .first()
 
-        const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
+        if (duplicateTransaction) {
 
-        if (timeDifferenceInSeconds <= minute) {
-            return res.status(400).json({
-                err: "Duplicate transaction. Please try again soon"
-            })
+            const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
+
+            if (timeDifferenceInSeconds <= minute) {
+                return res.status(400).json({
+                    err: "Duplicate transaction. Please try again soon",
+                    success: false
+                })
+            }
+
         }
 
         const date = new Date();
@@ -177,7 +194,8 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             return res.status(400).json({
                 err: "Insufficient funds in your account",
                 amount: req.body.amount,
-                account_balance: oldAccountBalanceValue
+                account_balance: oldAccountBalanceValue,
+                success: false
             })
         }
 
@@ -185,7 +203,8 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             return res.status(400).json({
                 err: "Insufficient funds for this transaction",
                 amount: req.body.amount,
-                account_balance: oldAccountBalanceValue
+                account_balance: oldAccountBalanceValue,
+                success: false
             })
         }
 
@@ -209,7 +228,8 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
         res.status(500).json({
             msg: 'Failed to withdraw from account',
             route: '/fund',
-            err
+            err,
+            success: false
         })
     }
 }
@@ -222,21 +242,24 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
         const validationResult = transferFundsSchema.validate(req.body, options)
         if (validationResult.error) {
             return res.status(400).json({
-                err: validationResult.error.details[0].message
+                err: validationResult.error.details[0].message,
+                success: false
             })
         }
 
         if (req.body.amount <= 0.0) {
             return res.status(400).json({
                 err: "Please enter a valid amount",
-                amount: req.body.amount
+                amount: req.body.amount,
+                success: false
             })
         }
 
         if (req.body.from_account_id === req.body.to_account_id) {
             return res.status(400).json({
                 err: "Sorry, you cannot transfer to yourself. Source and destination account are the same",
-                account_id: req.body.to_account_id
+                account_id: req.body.to_account_id,
+                success: false
             })
         }
         const sourceAccountBalanceObject = await database.select('account_balance', 'account_id').from<Account>('accounts').where('account_id', req.body.from_account_id).first()
@@ -251,6 +274,7 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
                 err: "Please enter valid account ids",
                 from_account_id: req.body.from_account_id,
                 to_account_id: req.body.to_account_id,
+                success: false
             })
         }
 
@@ -258,7 +282,8 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
             return res.status(400).json({
                 err: "Insufficient funds in your account",
                 amount: req.body.amount,
-                account_balance: sourceAccountBalanceValue
+                account_balance: sourceAccountBalanceValue,
+                success: false
             })
         }
 
@@ -266,7 +291,8 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
             return res.status(400).json({
                 err: "Insufficient funds for this transaction",
                 amount: req.body.amount,
-                account_balance: sourceAccountBalanceValue
+                account_balance: sourceAccountBalanceValue,
+                success: false
             })
         }
 
@@ -290,20 +316,22 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
         });
 
         const duplicateTransaction = await database<Transaction>('transactions')
-            .select('created_at')
-            .where('from_account_id', req.body.from_account_id)
-            .orWhere('to_account_id', req.body.to_account_id)
-            .andWhere('amount', req.body.amount)
+            .select('created_at', 'from_account_id', 'amount')
+            .where('amount', req.body.amount)
+            .andWhere('from_account_id', req.body.from_account_id)
             .orderBy('created_at', 'desc')
             .first()
 
-        const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
-
-        if (timeDifferenceInSeconds <= minute) {
-            return res.status(400).json({
-                err: "Duplicate transaction. Please try again soon"
-            })
+        if (duplicateTransaction) {
+            const timeDifferenceInSeconds = getTimeDifferenceInSeconds(duplicateTransaction.created_at)
+            if (timeDifferenceInSeconds <= minute) {
+                return res.status(400).json({
+                    err: "Duplicate transaction. Please try again soon",
+                    success: false
+                })
+            }
         }
+
 
         const date = new Date();
 
@@ -330,16 +358,22 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
         res.status(500).json({
             msg: 'Failed to transfer to account',
             route: '/transfer',
-            err
+            err,
+            success: false
         })
     }
 }
 
 function getTimeDifferenceInSeconds(transactionTime: Date) {
-    const lastTransactionTime = new Date(transactionTime)
-    const newTransactionTime = new Date()
-    const timeDifferenceInSeconds = (newTransactionTime.getTime() - lastTransactionTime.getTime()) / 1000;
-    return timeDifferenceInSeconds
+    try {
+        const lastTransactionTime = new Date(transactionTime)
+        const newTransactionTime = new Date()
+        const timeDifferenceInSeconds = (newTransactionTime.getTime() - lastTransactionTime.getTime()) / 1000;
+        return timeDifferenceInSeconds
+    } catch (err) {
+        throw err;
+    }
+
 }
 
 

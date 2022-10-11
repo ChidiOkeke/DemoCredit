@@ -7,15 +7,15 @@ Demo Credit is a mobile lending app that enables wallet functionality. It enable
 Before starting this project, install Git, MySQL and NodeJS on your machine.
 
 
-
-VSCode terminal is recommended.
+VSCode is recommended.
 
 ```bash
-# Clone this repository using SSH or HTTPS
+# Clone this repository using SSH
 $ git clone git@github.com:ChidiOkeke/DemoCredit.git 
 
 OR 
 
+# Clone this repository using HTTPS
 $ git clone https://github.com/ChidiOkeke/DemoCredit.git
 
 # Access the repository on your terminal.
@@ -39,7 +39,7 @@ $ yarn dev
 
 ```
 
-The project will now be accessible at [http:localhost:3000](http:localhost:3000)
+The project will now be accessible at [http://localhost:3000](http://localhost:3000)
 
 
 
