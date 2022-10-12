@@ -37,6 +37,9 @@ $ yarn migrate
 # Run
 $ yarn dev
 
+# Run tests
+$ yarn test
+
 ```
 
 The project will now be accessible at [http://localhost:3000](http://localhost:3000)
