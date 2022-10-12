@@ -22,7 +22,8 @@ export async function getAllTransactions(req: Request, res: Response, next: Next
             })
         } else {
             return res.status(400).json({
-                message: 'No transactions found'
+                message: 'No transactions found',
+                success: false
             })
         }
 
@@ -30,7 +31,8 @@ export async function getAllTransactions(req: Request, res: Response, next: Next
         res.status(500).json({
             msg: 'Failed to fetch all transactions',
             route: '/',
-            err
+            err,
+            success: false
         })
     }
 }
@@ -52,7 +54,8 @@ export async function getAccountTransactions(req: Request, res: Response, next: 
             })
         } else {
             return res.status(400).json({
-                message: 'No transactions found'
+                message: 'No transactions found',
+                success: false
             })
         }
 
@@ -60,7 +63,8 @@ export async function getAccountTransactions(req: Request, res: Response, next: 
         res.status(500).json({
             msg: 'Failed to fetch account transactions',
             route: '/',
-            err
+            err,
+            success: false
         })
     }
 }

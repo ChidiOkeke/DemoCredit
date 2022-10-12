@@ -183,4 +183,18 @@ describe("GET /transactions ", () => {
 
     })
 
+
+    //get transactions negative test case
+
+    const invalidId = '1982982'
+
+    it('Should not get transactions for invalid account ID', async () => {
+        const res = await request.get(`/transactions/` + invalidId)
+            .set('Authorization', `Bearer ${token}`)
+
+        expect(res.body.success).toBe(false)
+        expect(res.statusCode).toBe(400)
+
+    })
+
 });
