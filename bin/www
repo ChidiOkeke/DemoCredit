@@ -4,7 +4,7 @@ require('dotenv').config()
  * Module dependencies.
  */
 
-const app = require('../dist/app.js').default;
+const app = require('../dist/app').default;
 const debug = require('debug')('expresstemp:server');
 const http = require('http');
 
