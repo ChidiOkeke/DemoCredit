@@ -39,5 +39,8 @@
     "@types/morgan": "^1.9.3",
     "@types/uuid": "^8.3.4",
     "supertest": "^6.3.0"
+  },
+  "engines": {
+    "node": "16.15.1"
   }
 }
