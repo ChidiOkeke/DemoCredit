@@ -89,7 +89,8 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
 
             if (!validUser) {
                 res.status(401).json({
-                    message: "Passwords do not match"
+                    message: "Passwords do not match",
+                    success: false
                 })
             }
 
@@ -106,7 +107,8 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
 
             res.status(400).json({
                 message: 'User does not exist',
-                route: '/login'
+                route: '/login',
+                success: false
             })
 
         }
@@ -115,7 +117,8 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
         res.status(500).json({
             message: 'failed to login',
             route: '/login',
-            err
+            err,
+            success: false
         })
     }
 

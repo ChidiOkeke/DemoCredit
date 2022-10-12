@@ -76,7 +76,8 @@ async function loginUser(req, res, next) {
             delete user.password; //delete password from user object before api response
             if (!validUser) {
                 res.status(401).json({
-                    message: "Passwords do not match"
+                    message: "Passwords do not match",
+                    success: false
                 });
             }
             if (validUser) {
@@ -91,7 +92,8 @@ async function loginUser(req, res, next) {
         else {
             res.status(400).json({
                 message: 'User does not exist',
-                route: '/login'
+                route: '/login',
+                success: false
             });
         }
     }
@@ -99,7 +101,8 @@ async function loginUser(req, res, next) {
         res.status(500).json({
             message: 'failed to login',
             route: '/login',
-            err
+            err,
+            success: false
         });
     }
 }
