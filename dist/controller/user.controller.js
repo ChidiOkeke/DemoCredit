@@ -75,8 +75,9 @@ async function loginUser(req, res, next) {
         if (user) {
             console.log('3');
             const { user_id } = user;
-            const token = (0, utils_1.generateToken)({ user_id });
             console.log('4');
+            const token = (0, utils_1.generateToken)({ user_id });
+            console.log('4.1');
             const validUser = await bcryptjs_1.default.compare(req.body.password, user.password);
             console.log('5');
             delete user.password; //delete password from user object before api response
