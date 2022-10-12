@@ -1,1 +1,1 @@
-web: yarn 
+web: node bin/www
