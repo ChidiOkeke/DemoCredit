@@ -103,15 +103,6 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
 
         const date = new Date();
 
-        await database<Transaction>('transactions').insert({
-            transaction_id: transactionId,
-            transaction_type: transactionType,
-            from_account_id: req.body.account_id,
-            to_account_id: req.body.account_id,
-            date_issued: date.toLocaleString('en-GB'),
-            amount: req.body.amount
-        })
-
         await database<Account>('accounts').where({ account_id: req.body.account_id }).update({
             account_balance: newAccountBalance
         })
@@ -122,6 +113,15 @@ export async function fundAccount(req: Request, res: Response, next: NextFunctio
             amount: req.body.amount,
             account_balance: newAccountBalance,
             success: true
+        })
+
+        await database<Transaction>('transactions').insert({
+            transaction_id: transactionId,
+            transaction_type: transactionType,
+            from_account_id: req.body.account_id,
+            to_account_id: req.body.account_id,
+            date_issued: date.toLocaleString('en-GB'),
+            amount: req.body.amount
         })
 
     } catch (err) {
@@ -158,6 +158,8 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
         const oldAccountBalanceObject = await database.select('account_balance').from<Account>('accounts').where('account_id', req.body.account_id).first()
         const oldAccountBalanceValue = Number(oldAccountBalanceObject?.account_balance.toFixed(2));
 
+        const date = new Date();
+
         const duplicateTransaction = await database<Transaction>('transactions')
             .select('created_at')
             .where('from_account_id', req.body.account_id)
@@ -177,18 +179,6 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             }
 
         }
-
-        const date = new Date();
-
-        await database<Transaction>('transactions').insert({
-            transaction_id: transactionId,
-            transaction_type: transactionType,
-            from_account_id: req.body.account_id,
-            to_account_id: req.body.account_id,
-            date_issued: date.toLocaleString('en-GB'),
-            amount: req.body.amount
-        })
-
 
         if (oldAccountBalanceValue <= 0.0) {
             return res.status(400).json({
@@ -215,7 +205,6 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
         })
 
 
-
         res.status(200).json({
             message: "You have successfully withdrawn from your account",
             account_id: req.body.account_id,
@@ -223,6 +212,16 @@ export async function withdrawFunds(req: Request, res: Response, next: NextFunct
             account_balance: newAccountBalance,
             success: true
         })
+
+        await database<Transaction>('transactions').insert({
+            transaction_id: transactionId,
+            transaction_type: transactionType,
+            from_account_id: req.body.account_id,
+            to_account_id: req.body.account_id,
+            date_issued: date.toLocaleString('en-GB'),
+            amount: req.body.amount
+        })
+
 
     } catch (err) {
         res.status(500).json({
@@ -335,15 +334,6 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
 
         const date = new Date();
 
-        await database<Transaction>('transactions').insert({
-            transaction_id: transactionId,
-            transaction_type: transactionType,
-            from_account_id: req.body.from_account_id,
-            to_account_id: req.body.to_account_id,
-            date_issued: date.toLocaleString('en-GB'),
-            amount: req.body.amount
-        })
-
         res.status(200).json({
             message: "You have successfully transferred",
             from_account_id: req.body.from_account_id,
@@ -352,6 +342,15 @@ export async function transferFunds(req: Request, res: Response, next: NextFunct
             source_account_balance: sourceNewAccountBalanceFloat,
             destination_account_balance: destinationNewAccountBalanceFloat,
             success: true
+        })
+
+        await database<Transaction>('transactions').insert({
+            transaction_id: transactionId,
+            transaction_type: transactionType,
+            from_account_id: req.body.from_account_id,
+            to_account_id: req.body.to_account_id,
+            date_issued: date.toLocaleString('en-GB'),
+            amount: req.body.amount
         })
 
     } catch (err) {
