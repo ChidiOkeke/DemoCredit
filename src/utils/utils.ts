@@ -40,9 +40,14 @@ export const loginSchema = Joi.object().keys({
 })
 
 //Generate Token
-export const generateToken = (user: string): unknown => {
-    const pass = process.env.JWT_SECRET as string
-    return jwt.sign({ user }, pass, { expiresIn: '1d' })
+export const generateToken = (user: { [key: string]: unknown }): unknown => {
+
+    try {
+        const pass = process.env.JWT_SECRET as string
+        return jwt.sign(user, pass, { expiresIn: '1d' })
+    } catch (err) {
+        throw err
+    }
 }
 
 export const options = {

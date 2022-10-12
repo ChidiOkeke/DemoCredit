@@ -77,26 +77,26 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
                 success: false
             })
         }
-        
+
         const user = await database.select('*').from<User>('users').where('email', req.body.email).first()
-        
+
         if (user) {
-           
+
             const { user_id } = user
-            
-            const token = generateToken( user_id )
-           
+
+            const token = generateToken({ user_id })
+
             const validUser = await bcrypt.compare(req.body.password, user.password as string);
-           
+
             delete user.password //delete password from user object before api response
-      
+
             if (!validUser) {
                 res.status(401).json({
                     message: "Passwords do not match",
                     success: false
                 })
             }
-           
+
             if (validUser) {
                 res.status(200).json({
                     message: "Successfully logged in",
