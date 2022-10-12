@@ -26,7 +26,7 @@ module.exports = {
   test: {
     client: 'mysql2',
     connection: {
-      host: 'localhost',
+      host: DB_HOST,
       port: 3306,
       user: DB_USERNAME,
       password: DB_PASSWORD,
