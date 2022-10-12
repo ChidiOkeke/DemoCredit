@@ -39,7 +39,7 @@ exports.loginSchema = joi_1.default.object().keys({
 //Generate Token
 const generateToken = (user) => {
     const pass = process.env.JWT_SECRET;
-    return jsonwebtoken_1.default.sign(user, pass, { expiresIn: '1d' });
+    return jsonwebtoken_1.default.sign({ user }, pass, { expiresIn: '1d' });
 };
 exports.generateToken = generateToken;
 exports.options = {
